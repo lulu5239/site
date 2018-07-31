@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "http": "1",
+    "http": "1.0.0",
     "request": "2.81.0",
-    "socket": "1",
-    "express": "1"
+    "socket": "1.0.0",
+    "express": "1.0.0"
   },
-  "enginees": {
-    "node": "8.9.0"
+  "engines": {
+    "node": "10.0.0"
   }
 }
