@@ -4,5 +4,8 @@
     "request": "2.81.0",
     "socket": "1",
     "express": "1"
-  }
+  },
+  "enginees": [
+    "node": "8.9.0",
+  ]
 }
