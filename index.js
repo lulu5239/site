@@ -4,7 +4,7 @@ var io = require('socket.io')(http);
 var donnes = {}
 
 app.get('/chat', function(req, res){
-  res.sendFile(__dirname + '/socket_html.html');
+  res.sendFile('socket_html.html');
 });
 app.get('/', function(req, res){
   res.send("Bienvenue.");
@@ -44,12 +44,6 @@ io.on('connection', function(socket){
 			io.emit("mp."+x.replace("@", "") ,msg)
 		}
 	})
-});
-
-io.on('connection', function(socket){
-  socket.on("off", fvvf=>{
-	  console.log("Indisponible !")
-  })
 });
 
 http.listen(80, function(){
