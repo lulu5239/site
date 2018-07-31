@@ -5,7 +5,7 @@
     "socket": "1",
     "express": "1"
   },
-  "enginees": [
+  "enginees": {
     "node": "8.9.0",
-  ]
+  }
 }
