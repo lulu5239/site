@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Chat de Lulu5239</title>
+		<style>
+			* { margin: 0; padding: 0; box-sizing: border-box; }
+			body { font: 13px Helvetica, Arial; }
+			.form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+			.input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+			.button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+			#messages { list-style-type: none; margin: 0; padding: 0; }
+			#messages li { padding: 5px 10px; }
+			#messages li:nth-child(odd) { background: #eee; }
+			.bulle {
+				width: 250px;
+				height: 100px;
+				border: none;
+				position: fixed;
+				background-color: #0F0;
+				top: 50%;
+				left: 0%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="bulle" id="bulle">Chargement...</div>
+		<script>
+			var utilisateur = "Inconnu"
+		</script>
+		<ul id="messages"></ul>
+		<div class="form">
+			<input id="m" autocomplete="off" class="input"><button onclick="nouveau_msg(m.value, utilisateur)" class="button" id="send">▶</button>
+		</div>
+		<div class="form" id="confirm">
+			<input placeholder="Votre nom." class="input" id="mmbID"><input type="button" class="button" value="▶" onclick="confirm_id()">
+		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			var socket = io();
+			if(localStorage.id==undefined){
+				var id = ""+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)+Math.floor(Math.random()*10)
+				localStorage.id = id
+				localStorage.token = token
+			} else {
+				var id = localStorage.id
+				var token = localStorage.token
+			}
+			setTimeout(function(){document.getElementById("m").placeholder = "Vous êtes enregistrés en tant que : "+utilisateur}, 1000)
+			function nouveau_msg (msg, mmb) {
+				if(msg.startsWith("@")){
+					socket.emit("mp", {
+						txt: msg,
+						auteur: mmb,
+						auteur_id: id,
+					})
+				} else {
+					socket.emit("chat message", {
+						txt: msg,
+						auteur: mmb,
+						auteur_id: id,
+					})
+				}
+				m.value = ""
+			}
+			socket.on("connect", ()=>{
+				socket.emit("infos", {id: id, token: localStorage.token})
+				socket.on("infos."+id, infos => {
+					if(infos.nom!=null){
+						document.getElementById("confirm").innerHTML = ""
+						utilisateur = infos.nom
+						var token = infos.token
+						localStorage.token = token
+					}
+				})
+				socket.on("lock", (vfcdfg)=>{
+					send.style.opacity = "0"
+					send.style.width = "0%"
+				})
+				socket.on("unlock", (vfcdfg)=>{
+					send.style.opacity = "1"
+					send.style.width = "9%"
+				})
+				socket.on("chat message", (msg)=>{
+					if(msg.auteur==null){
+						document.getElementById("messages").innerHTML += "<a style='background-color: #0F0'>"+msg.txt+"</a><br>"
+					}else {
+						document.getElementById("messages").innerHTML += msg.auteur+" (@"+msg.auteur_id+") dit : "+msg.txt+"<br>"
+						if(msg.txt!=msg.txt.replace("<", "")&&msg.auteur!=null){
+							nouveau_msg("Vous connaissez le HTML ?", null)
+						}
+					}
+				})
+				socket.on("mp."+id, (msg)=>{
+					document.getElementById("messages").innerHTML += "<a style='background-color: #00F'>Vous avez reçu un MP de "+msg.auteur+" (@"+msg.auteur_id+") :<br>"+msg.txt+"</a><br>"
+				})
+				socket.on("disconnect", ()=>{
+					alert("Site off !")
+					socket.emit("chat message", {
+						auteur: null,
+						txt: utilisateur+" nous quitte !"
+					})
+				})
+			})
+			function confirm_id () {
+				socket.emit("+nom", {
+					id: id,
+					nom: mmbID.value,
+					token: ""+Math.floor(Math.random()*10000000000000000000000000000)
+				})
+			}
+			bulle.innerHTML = "Voici vos infos enregistrés :\n<br>\nVotre nom : "+utilisateur+"<br>Votre ID : "+id+"<br>Votre token (privé !!!) : "+token+"<br>Ne partagez jamais votre token !"
+		</script>
+	</body>
+</html>
