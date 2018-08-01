@@ -4,7 +4,7 @@ var io = require('socket.io')(http);
 var donnes = {}
 
 app.get('/chat', function(req, res){
-  res.sendFile('socket_html.html');
+  res.sendFile("https://raw.githubusercontent.com/lulu5239/site/master/socket_html.html");
 });
 app.get('/', function(req, res){
   res.send("Bienvenue.");
